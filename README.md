@@ -24,8 +24,38 @@ Then run your application container which uses /data volume
 docker run --volumes-from datavolume ....
 ```
 
+You can always jump into data volume with any container using shell like this
+
+```
+docker run --volumes-from datavolume -it busybox
+```
+
+**Backup**
+
+```
+docker run --volumes-from datavolume -v $(pwd):/backup busybox tar cvf /backup/backup.tar /data
+```
+
+or
+
+```
+docker run --volumes-from datavolume busybox tar cvf - data | gzip > backup.tgz
+```
+
+**Restore**
+
+```
+docker run --volumes-from datavolume -v $(pwd):/backup busybox tar xvf /backup/backup.tar
+```
+
+or
+
+```
+gunzip < backup.tgz | docker run --volumes-from datavolume -i busybox tar xvf -
+```
+
 **Cleanup**
 
 ```
-docker rm datavolume
+docker rm -v datavolume
 ```
